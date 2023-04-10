@@ -188,8 +188,10 @@ cd tmkdtmp
 
 # arrivati a questo punto abbiamo output.pdf in tutti i casi posizionato in tmkdtmp
 
+# print message with emoji converting to latex
+echo -e "📝 \e[34mConverting pdf to latex (zip)...\e[0m"
+
 # convert pdf to latex using mpx
-echo "Converting pdf to latex (zip) ..."
 mpx convert $output.pdf $output.tex
 
 # simulo mpx
@@ -199,14 +201,19 @@ mpx convert $output.pdf $output.tex
 # rm $output.tex
 # fine simulazione mpx
 
+# print message with emoji unzipping the latex archive
+echo -e "📦 \e[34mUnzipping archive with latex file...\e[0m"
+
 # unzip the latex file
 unzip -j $output.tex.zip
 
 # individua il file .tex e rinominalo in $output.tex
 mv *.tex $output.tex
 
+# print conversion message
+echo -e "📝 \e[34mConverting latex to md...\e[0m"
+
 # convert latex to md
-echo "Converting latex to md..."
 pandoc -s -f latex -t markdown -o $output-generated.md $output.tex
 
 # generating md template
@@ -221,7 +228,6 @@ echo "---" >> $output.md
 echo "" >> $output.md
 
 # concatenating generated md to template
-# attenzione: questo cat ignora i title? bhu
 cat $output-generated.md >> $output.md
 rm $output-generated.md
 
@@ -294,3 +300,13 @@ fi
 
 # print success message with check emoji
 echo -e "✅ \e[32mSuccess: $output.md created\e[0m"
+
+# print the list of the file produced with emoji and path
+echo -e "📁 \e[34mFiles produced:\e[0m"
+echo -e "📄 \e[34m$output.md\e[0m"
+echo -e "📄 \e[34mtex/$output.tex\e[0m"
+if [ "$input_ext" = "pdf" ]; then
+    echo -e "📄 \e[34mpdf/$output.pdf\e[0m"
+else
+    echo -e "📄 \e[34mimages/$output.jpg\e[0m"
+fi
