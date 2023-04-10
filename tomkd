@@ -31,6 +31,37 @@ done
 
 
 
+### CHECKING REQUIREMENTS ###
+
+# print checking requirements message
+echo -e "🔎 \e[34mChecking requirements...\e[0m"
+
+# check if imagemagick is installed
+if ! command -v convert &> /dev/null
+then
+    echo -e "❌ \e[31mError: ImageMagick is not installed.\e[0m" 1>&2
+    exit 1
+fi
+
+# check if pandoc is installed
+if ! command -v pandoc &> /dev/null
+then
+    echo -e "❌ \e[31mError: Pandoc is not installed.\e[0m" 1>&2
+    exit 1
+fi
+
+# check if mathpix mpx is installed
+if ! command -v mpx &> /dev/null
+then
+    echo -e "❌ \e[31mError: Mathpix mpx is not installed.\e[0m" 1>&2
+    exit 1
+fi
+
+# print success message
+echo -e "✅ \e[32mRequirements satisfied.\e[0m"
+
+
+
 ### INPUT ###
 
 # if input is set
