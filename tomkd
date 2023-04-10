@@ -1,0 +1,224 @@
+#!/bin/bash
+
+
+# set flag -i e -o
+# -i: input file
+# -o: output file
+
+### OPTIONS ###
+while getopts ":i:o:" flag
+do
+    case "${flag}" in
+        i) 
+            input=${OPTARG}
+            ;;
+        o) 
+            output=${OPTARG}
+            ;;
+        \?)
+            echo -e "❌ \e[31mError: Invalid option -$OPTARG.\e[0m" 1>&2
+            exit 1
+            ;;
+        :)
+            echo -e "❌ \e[31mError: Option -$OPTARG requires an argument.\e[0m" 1>&2
+            exit 1
+            ;;
+    esac
+done
+
+
+
+### INPUT ###
+
+# if input is set
+if [ -n "$input" ]; then
+
+    # check if input file exists
+    if [ ! -f "$input" ]; then
+        echo -e "❌ \e[31mError: Input file does not exist.\e[0m" 1>&2
+        exit 1
+    fi
+
+    # extract input extension
+    input_ext=${input##*.}
+
+    # if input extension is not set, print error and exit
+    if [ -z "$input_ext" ] || [ "$input_ext" = "$input" ]; then
+        echo -e "❌ \e[31mError: Input file extension not set.\e[0m Use -i option" 1>&2
+        exit 1
+    else
+        # print input extension
+        echo "Input extension: $input_ext"
+        # if the input extension is not jpg or pdf, print error and exit
+        if [ "$input_ext" != "jpg" ] && [ "$input_ext" != "pdf" ]; then
+            echo -e "❌ \e[31mError: Input file extension not supported.\e[0m Use jpg or pdf" 1>&2
+            exit 1
+        fi
+    fi
+
+    # print input with an info message and icon emoji
+    echo -e "ℹ️  \e[34mInput file: $input\e[0m"
+
+    # overwrite input with the name of the file without the extension
+    input=${input%.*}
+# else, if input is not set
+else
+    echo -e "❌ \e[31mError: Input file not set.\e[0m Use -i option" 1>&2
+    exit 1
+fi
+
+
+
+### OUTPUT ###
+
+# if output is set, 
+if [ -n "$output" ]; then
+    # extract output extension
+    output_ext=${output##*.}
+
+    # if output extension is not set, print error and exit
+    if [ -z "$output_ext" ] || [ "$output_ext" = "$output" ]; then
+        echo -e "❌ \e[31mError: Output file extension not set.\e[0m Use -o option" 1>&2
+        exit 1
+    else
+    # (else, if output extension is set) if is not pdf print error and exit
+        if [ "$output_ext" != "md" ]; then
+            echo -e "❌ \e[31mError: Output file extension not supported.\e[0m Use md" 1>&2
+            exit 1
+        fi
+    fi
+
+    # print output with an info message and icon emoji
+    echo -e "ℹ️  \e[34mOutput file: $output (md)\e[0m"
+
+    # overwrite output with the name of the file without the extension
+    output=${output%.*}
+else
+
+    # if the input contains a path, extract the name of the file without the path
+    if [ "$input" != "${input##*/}" ]; then
+        output=${input##*/}
+    else
+        output=$input
+    fi
+
+    # print warning message
+    echo -e "⚠️  \e[33mWarning: Output file not set.\e[0m Using $output"
+fi
+
+
+
+### CONVERSION ###
+
+# create temp directory if it does not exist
+if [ ! -d "tmkdtmp" ]; then
+    mkdir tmkdtmp
+fi
+
+# if the extension of the input file is .jpg
+if [ "$input_ext" = "jpg" ]; then
+
+    # move the input file to the temp directory an rename it to $output.jpg
+    mv $input.jpg tmkdtmp/$output.jpg
+
+    # convert it to .pdf with imagemagick
+    convert tmkdtmp/$output.jpg tmkdtmp/$output.pdf
+
+    # if "images" directory exists (out of the temp), move output.jpg to images directory
+    if [ -d "images" ]; then
+        echo "images directory exists"
+        mv tmkdtmp/$output.jpg images
+        echo "moved $output.jpg to images directory"
+    else
+        # else, create "images" directory and move output.jpg to images directory
+        echo "images directory does not exist"
+        mkdir images
+        mv tmkdtmp/$output.jpg images
+        echo "created images directory and moved $output.jpg to images directory"
+    fi
+
+    # at the end, add button to download the jpg file
+
+else
+    
+    # if the extension of the input file is .pdf, sposta il file pdf nella cartella tmkdtmp
+    if [ "$input_ext" = "pdf" ]; then
+        mv $input.pdf tmkdtmp/$output.pdf
+        echo "moved $input.pdf to tmkdtmp/$output.pdf"
+    fi
+    
+fi
+
+# go to temp directory
+cd tmkdtmp
+
+# arrivati a questo punto abbiamo output.pdf in tutti i casi posizionato in tmkdtmp
+
+# convert pdf to latex using mpx
+echo "Converting pdf to latex (zip) ..."
+mpx convert $output.pdf $output.tex
+
+# simulo mpx
+# touch $output.tex
+# echo "Zipping latex file..."
+# zip $output.tex.zip $output.tex
+# rm $output.tex
+# # unzippo $output.tex.zip
+# fine simulazione mpx
+
+# unzip the latex file
+unzip -j $output.tex.zip
+
+# individua il file .tex e rinominalo in $output.tex
+mv *.tex $output.tex
+
+# convert latex to md
+echo "Converting latex to md..."
+pandoc -f latex -t markdown -o $output.md $output.tex
+
+
+
+### REPOSITIONING FILES ###
+
+# mv the file md out of the temp directory
+mv  $output.md ../$output.md
+
+# if outside of the temp directory exists a directory called "tex", move the tex file to it
+if [ -d "../tex" ]; then
+    mv $output.tex ../tex
+    echo "moved $output.tex to tex directory"
+    # else, create the directory and move the tex file to it
+else
+    mkdir ../tex
+    mv $output.tex ../tex
+    echo "created tex directory and moved $output.tex to tex directory"
+fi
+
+# if the extension of the input file is .pdf 
+if [ "$input_ext" = "pdf" ]; then
+    # if outside of the temp directory exists a directory called "pdf", move the pdf file to it
+    if [ -d "../pdf" ]; then
+        mv $output.pdf ../pdf
+        echo "moved $output.pdf to pdf directory"
+    # else, create the directory and move the pdf file to it
+    else
+        mkdir ../pdf
+        mv $output.pdf ../pdf
+        echo "created pdf directory and moved $output.pdf to pdf directory"
+    fi
+fi
+
+
+
+### CLEANING ###
+
+# esci dalla cartella tmkdtmp
+cd ..
+
+# if tmkdtmp exists, remove it
+if [ -d tmkdtmp ]; then
+    rm -r tmkdtmp
+fi
+
+# print success message with check emoji
+echo -e "✅ \e[32mSuccess: $output.md created\e[0m"
