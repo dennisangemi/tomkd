@@ -6,7 +6,7 @@
 # -o: output file
 
 ### OPTIONS ###
-while getopts ":i:o:" flag
+while getopts ":i:o:t:" flag
 do
     case "${flag}" in
         i) 
@@ -14,6 +14,9 @@ do
             ;;
         o) 
             output=${OPTARG}
+            ;;
+        t)
+            tag=${OPTARG}
             ;;
         \?)
             echo -e "❌ \e[31mError: Invalid option -$OPTARG.\e[0m" 1>&2
@@ -156,14 +159,14 @@ cd tmkdtmp
 
 # convert pdf to latex using mpx
 echo "Converting pdf to latex (zip) ..."
-mpx convert $output.pdf $output.tex
+# mpx convert $output.pdf $output.tex
 
 # simulo mpx
-# touch $output.tex
-# echo "Zipping latex file..."
-# zip $output.tex.zip $output.tex
-# rm $output.tex
-# # unzippo $output.tex.zip
+touch $output.tex
+echo "Zipping latex file..."
+zip $output.tex.zip $output.tex
+rm $output.tex
+# unzippo $output.tex.zip
 # fine simulazione mpx
 
 # unzip the latex file
@@ -174,8 +177,46 @@ mv *.tex $output.tex
 
 # convert latex to md
 echo "Converting latex to md..."
-pandoc -f latex -t markdown -o $output.md $output.tex
+pandoc -f latex -t markdown -o $output-generated.md $output.tex
 
+# generating md template
+touch $output.md
+echo "---" > $output.md
+echo "title: Esame del $output" >> $output.md
+# if tag is set
+if [ -n "$tag" ]; then
+    echo -e "tags:\n    - $tag" >> $output.md
+fi
+echo "---" >> $output.md
+echo "" >> $output.md
+
+# concatenating generated md to template
+cat $output-generated.md >> $output.md
+rm $output-generated.md
+
+# adding admonitions to md
+echo "" >> $output.md
+echo "??? success "Visualizza le soluzioni"
+    {% include-markdown "../placeholder/soluzioni.md" %}
+
+??? note "Visualizza lo svolgimento"
+    {% include-markdown "../placeholder/svolgimento.md" %}" >> $output.md
+
+# add new line
+echo "" >> $output.md
+echo "---" >> $output.md
+echo "" >> $output.md
+
+# adding download button
+# if the extension of the input file is .jpg
+if [ "$input_ext" = "jpg" ]; then
+    echo "[:material-image: Immagine del compito](images/$output.jpg){ .md-button }" >> $output.md
+else
+    # if the extension of the input file is .pdf
+    if [ "$input_ext" = "pdf" ]; then
+        echo "[:fontawesome-regular-file-pdf: Download](pdf/$output.pdf){ .md-button }" >> $output.md
+    fi
+fi
 
 
 ### REPOSITIONING FILES ###
