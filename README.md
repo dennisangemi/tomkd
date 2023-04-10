@@ -1,9 +1,6 @@
 # tomkd
 
-Questo tool funziona per converti jpg o pdf to latex se il file di input non ha immagini!
-Bisogna aggiornare il tool per le immagini
-
-Read requirements
+Questo tool funziona per convertire jpg o pdf to latex se il file di input non ha immagini! Viene sfruttato il servizio di MathPix (non open, con un piano gratuito)
 
 ## Set up
 
@@ -23,7 +20,20 @@ Read requirements
 
 ## Getting started
 
+Requirements
+- imagemagick
+- mpx (MathPix CLI)
+- pandoc
+
+Login to your MathPix account
+```shell
+mpx login
+```
+
+
 ## Usage
+
+You can run
 
 ```bash
 tomkd -i compito.jpg -o YYYY-MM-DD.md
@@ -40,13 +50,18 @@ oppure
 tomkd -i compito.pdf
 ```
 
+ma anche
+```bash
+tomkd -i compito.jpg/pdf -o YYYY-MM-DD.md -t "Nome Cognome"
+```
+
 ## Build
-simply run
+
+Download this repo and simply run
 
 ```bash
 sudo ./build
 ```
 
 ## Future developements
-- add button for download pdf or jpg file (different icon) to md file
 - check if latex contains images and manage that 
