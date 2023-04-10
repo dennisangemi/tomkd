@@ -159,14 +159,13 @@ cd tmkdtmp
 
 # convert pdf to latex using mpx
 echo "Converting pdf to latex (zip) ..."
-# mpx convert $output.pdf $output.tex
+mpx convert $output.pdf $output.tex
 
 # simulo mpx
-touch $output.tex
-echo "Zipping latex file..."
-zip $output.tex.zip $output.tex
-rm $output.tex
-# unzippo $output.tex.zip
+# touch $output.tex
+# echo "Zipping latex file..."
+# zip $output.tex.zip $output.tex
+# rm $output.tex
 # fine simulazione mpx
 
 # unzip the latex file
@@ -197,10 +196,10 @@ rm $output-generated.md
 # adding admonitions to md
 echo "" >> $output.md
 echo "??? success "Visualizza le soluzioni"
-    {% include-markdown "../placeholder/soluzioni.md" %}
+    {% include-markdown \"../placeholder/soluzioni.md\" %}
 
 ??? note "Visualizza lo svolgimento"
-    {% include-markdown "../placeholder/svolgimento.md" %}" >> $output.md
+    {% include-markdown \"../placeholder/svolgimento.md\" %}" >> $output.md
 
 # add new line
 echo "" >> $output.md
