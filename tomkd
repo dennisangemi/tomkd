@@ -190,6 +190,7 @@ echo "---" >> $output.md
 echo "" >> $output.md
 
 # concatenating generated md to template
+# attenzione: questo cat ignora i title? bhu
 cat $output-generated.md >> $output.md
 rm $output-generated.md
 
