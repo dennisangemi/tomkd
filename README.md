@@ -5,6 +5,26 @@ Bisogna aggiornare il tool per le immagini
 
 Read requirements
 
+## Set up
+
+1. Download the bash script
+```shell
+wget "https://raw.githubusercontent.com/dennisangemi/tomkd/main/tomkd"
+```
+
+1. Move it to `/usr/local/bin`
+```shell
+sudo mv ./tomkd /usr/local/bin
+```
+
+1. Make it executable
+```shell
+sudo chmod +x /usr/local/bin/frictionless2md
+```
+
+
+## Getting started
+
 ## Usage
 
 ```bash
