@@ -142,6 +142,16 @@ fi
 
 
 
+### CHECKING OVERWRITING RISKS #2 ###
+
+# if the output file exists, print error and exit
+if [ -f "$output.md" ]; then
+    echo -e "❌ \e[31mError: Output file already exists.\e[0m" 1>&2
+    echo "Use -o option to set a different output filename" 1>&2
+    exit 1
+fi
+
+
 ### CONVERSION ###
 
 # create temp directory if it does not exist
