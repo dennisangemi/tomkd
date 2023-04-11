@@ -75,4 +75,4 @@ sudo ./build
 This is the same of [setup](#set-up) but in this way you can use your own modified 
 
 ## Credit
-Dennis Angemi
+[Dennis Angemi](https://twitter.com/dennisangemi)
