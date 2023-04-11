@@ -1,6 +1,6 @@
 # tomkd
 
-Questo tool funziona per convertire jpg o pdf to latex se il file di input non ha immagini! Viene sfruttato il servizio di MathPix (non open, con un piano gratuito)
+Questo tool funziona per convertire jpg o pdf to latex. Viene sfruttato il servizio di MathPix (non open, con un piano gratuito)
 
 ## Set up
 
