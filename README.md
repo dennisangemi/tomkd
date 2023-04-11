@@ -14,7 +14,7 @@ Questo tool funziona per convertire jpg o pdf to latex. Viene sfruttato il servi
     ```
 1. Make it executable
     ```shell
-    sudo chmod +x /usr/local/bin/frictionless2md
+    sudo chmod +x /usr/local/bin/tomkd
     ```
 
 
