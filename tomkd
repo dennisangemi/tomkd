@@ -243,29 +243,31 @@ echo -e "📝 \e[34mConverting latex to md...\e[0m"
 # convert latex to md
 pandoc -s -f latex -t markdown -o $output-generated.md $output.tex
 
-# for each image in the md, pick the path of the image in md inside parenthesis "![image](path)"
-for i in $(grep -o -P '(?<=\!\[image\]\().*?(?=\))' $output-generated.md); do
-    # if the image is in the images folder
-    if [ -f "images/$i.jpg" ]; then
-        # substitute the path of the image with the name of the file
-        sed -i "s/!\[image\]($i)/![image](images\/$i.jpg)/g" $output-generated.md
-        
-        # print i
-        # echo old $i
-        # echo new images/$i.jpg
-    fi
-done
-
-# print message with emoji image path fixed
-echo -e "📝 \e[34mImage path fixed.\e[0m"
-
-# if images folder exists, delete `{width="\textwidth"}`` from output-generated.md
+# if there are images, fix the path in md and delete {width="\\textwidth"} from md
 if [ -d "images" ]; then
-    sed -i 's/{width="\\textwidth"}//g' $output-generated.md
-fi
 
-# print message with emoji unuseful {width="\\textwidth"} deleted
-echo -e "📝 \e[34mUnuseful {width=} deleted.\e[0m"
+    # for each image in the md, pick the path of the image in md inside parenthesis "![image](path)"
+    for i in $(grep -o -P '(?<=\!\[image\]\().*?(?=\))' $output-generated.md); do
+        # if the image is in the images folder
+        if [ -f "images/$i.jpg" ]; then
+            # substitute the path of the image with the name of the file
+            sed -i "s/!\[image\]($i)/![image](images\/$i.jpg)/g" $output-generated.md
+
+            # print i
+            # echo old $i
+            # echo new images/$i.jpg
+        fi
+    done
+
+    # print message with emoji image path fixed
+    echo -e "📝 \e[34mImage path fixed.\e[0m"
+
+    # delete unuseful {width="\\textwidth"} from output-generated.md
+    sed -i 's/{width="\\textwidth"}//g' $output-generated.md
+
+    # print message with emoji unuseful {width="\\textwidth"} deleted
+    echo -e "📝 \e[34mUnuseful {width=} deleted.\e[0m"
+fi
 
 # print message with emoji generating md structure
 echo -e "📝 \e[34mGenerating md structure...\e[0m"
