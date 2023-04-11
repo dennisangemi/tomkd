@@ -152,6 +152,7 @@ if [ -f "$output.md" ]; then
 fi
 
 
+
 ### CONVERSION ###
 
 # create temp directory if it does not exist
@@ -302,7 +303,14 @@ fi
 echo -e "📝 \e[34m$output.md formatted.\e[0m"
 
 
+
 ### REPOSITIONING FILES ###
+
+# create file-produced.txt
+touch file-produced.txt
+
+# print the name of the output file in file produced
+echo "📄 $output.md" >> file-produced.txt
 
 # mv the file md out of the temp directory
 mv  $output.md ../$output.md
@@ -310,39 +318,75 @@ mv  $output.md ../$output.md
 # if outside of the temp directory exists a directory called "tex", move the tex file to it
 if [ -d "../tex" ]; then
     mv $output.tex ../tex
-    echo "moved $output.tex to tex directory"
+    # echo "moved $output.tex to tex directory"
     # else, create the directory and move the tex file to it
 else
     mkdir ../tex
     mv $output.tex ../tex
-    echo "created tex directory and moved $output.tex to tex directory"
+    # echo "created tex directory and moved $output.tex to tex directory"
 fi
+echo "📄 tex/$output.tex" >> file-produced.txt
 
 # if the extension of the input file is .pdf 
 if [ "$input_ext" = "pdf" ]; then
+    echo "📄 pdf/$output.pdf" >> file-produced.txt
     # if outside of the temp directory exists a directory called "pdf", move the pdf file to it
     if [ -d "../pdf" ]; then
         mv $output.pdf ../pdf
-        echo "moved $output.pdf to pdf directory"
+        # echo "moved $output.pdf to pdf directory"
     # else, create the directory and move the pdf file to it
     else
         mkdir ../pdf
         mv $output.pdf ../pdf
-        echo "created pdf directory and moved $output.pdf to pdf directory"
+        # echo "created pdf directory and moved $output.pdf to pdf directory"
+    fi
+else
+# if the extension of the input file is .jpg
+    echo "📄 images/$output.jpg" >> file-produced.txt
+    # if outside of the temp directory exists a directory called "images", move the jpg file to it
+    if [ -d "../images" ]; then
+        mv $output.jpg ../images
+        # echo "moved $output.jpg to images directory"
+    # else, create the directory and move the jpg file to it
+    else
+        mkdir ../images
+        mv $output.jpg ../images
+        # echo "created images directory and moved $output.jpg to images directory"
     fi
 fi
 
+
 # if document contains images, if outside of the temp directory exists a directory called "images", move the jpg files to it
 if [ -d images ]; then
+    ls images/*.jpg -1 | sed 's/^/📄 /' >> file-produced.txt
     if [ -d "../images" ]; then
         mv images/*.jpg ../images
-        echo "moved temp images to images directory"
+        # echo "moved temp images to images directory"
     # else, create the directory and move the tex file to it
     else
         mv images ../images
-        echo "created new images directory. moved temp images to images directory"
+        # echo "created new images directory. moved temp images to images directory"
     fi
 fi
+
+
+
+### END MESSAGE ###
+
+# print success message with check emoji
+echo -e "✅ \e[32mSuccess: $output.md created\e[0m"
+
+# print the list of the file produced with emoji and path
+echo -e "📁 \e[34mFiles produced:\e[0m"
+# echo -e "📄 \e[34m$output.md\e[0m"
+# echo -e "📄 \e[34mtex/$output.tex\e[0m"
+# if [ "$input_ext" = "pdf" ]; then
+#     echo -e "📄 \e[34mpdf/$output.pdf\e[0m"
+# else
+#     echo -e "📄 \e[34mimages/$output.jpg\e[0m"
+# fi
+cat file-produced.txt
+
 
 
 ### CLEANING ###
@@ -353,17 +397,4 @@ cd ..
 # if tmkdtmp exists, remove it
 if [ -d tmkdtmp ]; then
     rm -r tmkdtmp
-fi
-
-# print success message with check emoji
-echo -e "✅ \e[32mSuccess: $output.md created\e[0m"
-
-# print the list of the file produced with emoji and path
-echo -e "📁 \e[34mFiles produced:\e[0m"
-echo -e "📄 \e[34m$output.md\e[0m"
-echo -e "📄 \e[34mtex/$output.tex\e[0m"
-if [ "$input_ext" = "pdf" ]; then
-    echo -e "📄 \e[34mpdf/$output.pdf\e[0m"
-else
-    echo -e "📄 \e[34mimages/$output.jpg\e[0m"
 fi
