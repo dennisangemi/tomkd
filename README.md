@@ -1,6 +1,6 @@
 # tomkd
 
-Questo tool funziona per convertire jpg o pdf to latex. Viene sfruttato il servizio di MathPix (non open, con un piano gratuito)
+Questo tool funziona per convertire jpg o pdf to latex. Viene sfruttato il servizio di MathPix (non open, con un piano gratuito). Questo tool è stato utilizzato per generare la maggior parte delle pagine di questo sito in Material for MkDocs https://unict-dmi.github.io/DFA-compiti/
 
 ## Set up
 
@@ -25,7 +25,7 @@ Requirements
 - mpx (MathPix CLI)
 - pandoc
 
-Login to your MathPix account
+Signup to MathPix and then login to your MathPix account running
 ```shell
 mpx login
 ```
@@ -33,35 +33,34 @@ mpx login
 
 ## Usage
 
-You can run
+### Essential options
+
+`-i` for the input file. It can be `.jpg` of `.pdf`
 
 ```bash
-tomkd -i compito.jpg -o YYYY-MM-DD.md
+tomkd -i compito.jpg
 ```
 
-oppure
+### Optional flags
+
+`-o` for the output (it must be `.md`)
 
 ```bash
-tomkd -i compito.pdf -o YYYY-MM-DD.md 
+tomkd -i compito.pdf -o YYYY-MM-DD.md
 ```
 
-oppure
-```
-tomkd -i compito.pdf
-```
+`-t` for the tag
 
-ma anche
 ```bash
-tomkd -i compito.jpg/pdf -o YYYY-MM-DD.md -t "Nome Cognome"
+tomkd -i compito.pdf -o YYYY-MM-DD.md -t "Questo è il mio tag"
 ```
 
 ## Build
 
-Download this repo and simply run
+If u want to build the tool from the repo, downloat this repo and then run
 
 ```bash
 sudo ./build
 ```
 
-## Future developements
-- check if latex contains images and manage that 
+This is the same of [setup](#set-up) but in this way you can use your own modified 
