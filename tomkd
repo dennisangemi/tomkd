@@ -262,7 +262,7 @@ echo -e "📝 \e[34mGenerating md structure...\e[0m"
 # generating md template
 touch $output.md
 echo "---" > $output.md
-echo "title: Esame del $output" >> $output.md
+echo "title: Esame del" $(date -d "$output" "+%-d %B %Y") >> $output.md
 # if tag is set
 if [ -n "$tag" ]; then
     echo -e "tags:\n    - $tag" >> $output.md
