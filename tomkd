@@ -1,11 +1,21 @@
 #!/bin/bash
 
 
+
+# tomkd is a tool to convert jpg or pdf to markdown with mathpix, pandoc and imagemagick. 
+# The code is available at https://github.com/dennisangemi/tomkd.
+# This is a bash script useful for students who want to convert their exams to markdown to publish with mkdocs.
+# See https://unict-dmi.github.io/DFA-compiti/ for an example.
+
+
+
+### OPTIONS ###
+
 # set flag -i e -o
 # -i: input file
 # -o: output file
+# -t: tag
 
-### OPTIONS ###
 while getopts ":i:o:t:" flag
 do
     case "${flag}" in
@@ -378,13 +388,6 @@ echo -e "✅ \e[32mSuccess: $output.md created\e[0m"
 
 # print the list of the file produced with emoji and path
 echo -e "📁 \e[34mFiles produced:\e[0m"
-# echo -e "📄 \e[34m$output.md\e[0m"
-# echo -e "📄 \e[34mtex/$output.tex\e[0m"
-# if [ "$input_ext" = "pdf" ]; then
-#     echo -e "📄 \e[34mpdf/$output.pdf\e[0m"
-# else
-#     echo -e "📄 \e[34mimages/$output.jpg\e[0m"
-# fi
 cat file-produced.txt
 
 
