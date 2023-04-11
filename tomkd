@@ -220,11 +220,44 @@ unzip -j $output.tex.zip
 # individua il file .tex e rinominalo in $output.tex
 mv *.tex $output.tex
 
+# se c'è almeno un file jpg indifferentemente dal nome, sposta tutte le immagini in una cartella images
+if [ -n "$(ls *.jpg 2>/dev/null)" ]; then
+    mkdir images
+    mv *.jpg images
+fi
+
 # print conversion message
 echo -e "📝 \e[34mConverting latex to md...\e[0m"
 
 # convert latex to md
 pandoc -s -f latex -t markdown -o $output-generated.md $output.tex
+
+# for each image in the md, pick the path of the image in md inside parenthesis "![image](path)"
+for i in $(grep -o -P '(?<=\!\[image\]\().*?(?=\))' $output-generated.md); do
+    # if the image is in the images folder
+    if [ -f "images/$i.jpg" ]; then
+        # substitute the path of the image with the name of the file
+        sed -i "s/!\[image\]($i)/![image](images\/$i.jpg)/g" $output-generated.md
+        
+        # print i
+        # echo old $i
+        # echo new images/$i.jpg
+    fi
+done
+
+# print message with emoji image path fixed
+echo -e "📝 \e[34mImage path fixed.\e[0m"
+
+# if images folder exists, delete `{width="\textwidth"}`` from output-generated.md
+if [ -d "images" ]; then
+    sed -i 's/{width="\\textwidth"}//g' $output-generated.md
+fi
+
+# print message with emoji unuseful {width="\\textwidth"} deleted
+echo -e "📝 \e[34mUnuseful {width=} deleted.\e[0m"
+
+# print message with emoji generating md structure
+echo -e "📝 \e[34mGenerating md structure...\e[0m"
 
 # generating md template
 touch $output.md
@@ -265,6 +298,9 @@ else
     fi
 fi
 
+# print message with emoji md formatted
+echo -e "📝 \e[34m$output.md formatted.\e[0m"
+
 
 ### REPOSITIONING FILES ###
 
@@ -296,6 +332,17 @@ if [ "$input_ext" = "pdf" ]; then
     fi
 fi
 
+# if document contains images, if outside of the temp directory exists a directory called "images", move the jpg files to it
+if [ -d images ]; then
+    if [ -d "../images" ]; then
+        mv images/*.jpg ../images
+        echo "moved temp images to images directory"
+    # else, create the directory and move the tex file to it
+    else
+        mv images ../images
+        echo "created new images directory. moved temp images to images directory"
+    fi
+fi
 
 
 ### CLEANING ###
