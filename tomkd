@@ -289,10 +289,10 @@ rm $output-generated.md
 
 # adding admonitions to md
 echo "" >> $output.md
-echo "??? success "Visualizza le soluzioni"
+echo "??? success \"Visualizza le soluzioni\"
     {% include-markdown \"../placeholder/soluzioni.md\" %}
 
-??? note "Visualizza lo svolgimento"
+??? note \"Visualizza lo svolgimento\"
     {% include-markdown \"../placeholder/svolgimento.md\" %}" >> $output.md
 
 # add new line
